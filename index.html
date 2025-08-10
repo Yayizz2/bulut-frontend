@@ -22,7 +22,7 @@
 <body>
   <main class="card" role="main">
     <h1>Bulut Üssü</h1>
-    <p>Herkesin görebileceği basit bir açılış sayfası. Aşağıdaki buton, ileride <code>Cloudflare Workers</code> üstündeki API'den verileri çekecek.</p>
+    <p>Herkesin görebileceği basit bir açılış sayfası. Aşağıdaki buton, Cloudflare Workers üzerindeki API'den verileri çekecek.</p>
     <div class="actions">
       <button id="fetchBtn" type="button">Verileri Getir</button>
     </div>
@@ -33,37 +33,24 @@
 
   <script>
     const statusEl = document.getElementById('status');
+    const API_URL = "https://bulut-gateway.yayizz2.workers.dev"; // kendi API URL'in
+    const API_KEY = "<GUCLU_BIR_ANAHTAR>";                        // Terraform'a verdiğinle aynı
+
     document.getElementById('fetchBtn').addEventListener('click', async () => {
       statusEl.textContent = 'İstek gönderiliyor…';
 
-      // 1) Şimdilik demo: uydurma bir JSON ile gösterim
-      //    İleride burayı Workers URL'inle (ör: https://kullanici-adin.workers.dev/data) değiştireceğiz.
       try {
-        // DEMO: local JSON taklidi
-        const demo = await new Promise(r => setTimeout(() => r({ ok:true, items:[{id:1,name:'Örnek Kayıt'}] }), 600));
-        if (!demo.ok) throw new Error('Hata!');
-        statusEl.textContent = `Başarılı: ${demo.items.length} kayıt alındı.`;
-        alert('Demo veri geldi: ' + JSON.stringify(demo.items, null, 2));
-      } catch (e) {
-        statusEl.textContent = 'Hata: ' + (e?.message || e);
-        console.error(e);
-      }
-
-      /*
-      // 2) GERÇEK API bağlandığında şöyle olacak:
-      try {
-        const res = await fetch('https://KENDI-WORKER-URLIN.dev/data', {
+        const res = await fetch(`${API_URL}?key=${encodeURIComponent(API_KEY)}`, {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        statusEl.textContent = `Başarılı: ${Array.isArray(data)? data.length : 1} kayıt.`;
-        console.log(data);
+        statusEl.textContent = `Başarılı: ${Array.isArray(data) ? data.length : 1} kayıt.`;
+        alert('Veri geldi:\n' + JSON.stringify(data, null, 2));
       } catch (err) {
         statusEl.textContent = 'Hata: ' + err.message;
       }
-      */
     });
   </script>
 </body>
